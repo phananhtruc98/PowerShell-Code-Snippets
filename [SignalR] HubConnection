@@ -1,0 +1,12 @@
+$token = "dummyToken"
+[System.Reflection.Assembly]::LoadFrom(".\Microsoft.AspNet.SignalR.Client.dll")
+[System.Reflection.Assembly]::LoadFrom(".\Newtonsoft.Json.dll")
+$queryString = @{ token =$token }
+$server = "http://dummyRoute/signalr";
+$hub = New-Object Microsoft.AspNet.SignalR.Client.HubConnection($server, $queryString);
+$hub.Start().Wait();
+Get-EventSubscriber | Unregister-Event
+Register-ObjectEvent -InputObject $hub -EventName "Reconnected" -Action ({
+    Write-Host "Reconnected"
+    [System.Windows.MessageBox]::Show('Reconnected!','Warning','Ok','Warning')
+})
